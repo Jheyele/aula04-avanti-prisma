@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 export default function (request, response, next) {
     const { authorization } = request.headers;
-    console.log(authorization)
+
     if (!authorization) {
         return response.status(401).json("Token missing!");
     }
