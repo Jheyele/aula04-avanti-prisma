@@ -1,4 +1,5 @@
 import { prismaClient } from "../database/PrismaClient.js";
+import bcrypt from "bcryptjs"
 
 export class ClientController {
  
@@ -24,7 +25,7 @@ export class ClientController {
     }
 
     async createClient (request, response) {
-        const { name, email, phone } = request.body;
+        const { name, email, phone, isAdmin, password } = request.body;
         try {
             const clientCheck = await prismaClient.client.findFirst({
                 where:{
@@ -36,11 +37,22 @@ export class ClientController {
                 return response.status(409).json("E-mail already registered");
             }
 
+           const passwordHash = bcrypt.hashSync(password, 10);
+
             const client = await prismaClient.client.create({
                 data: {
                     name,
                     email,
-                    phone
+                    phone,
+                    isAdmin,
+                    password: passwordHash
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    phone: true,
+                    isAdmin: true
                 }
             });
             return response.status(201).json(client);
@@ -50,9 +62,12 @@ export class ClientController {
     }
 
     async updateClient (request, response) {
-        const { name, email, phone } = request.body;
+        const { name, email, phone, isAdmin, password} = request.body;
         const { id } = request.params;
+
         try {
+
+            const passwordHash = bcrypt.hashSync(password, 10);
             const client = await prismaClient.client.update({
                 where: {
                     id
@@ -60,7 +75,9 @@ export class ClientController {
                 data: {
                     name,
                     email,
-                    phone
+                    phone,
+                    isAdmin,
+                    password: passwordHash
                 }
             })
             return response.status(200).json(client);

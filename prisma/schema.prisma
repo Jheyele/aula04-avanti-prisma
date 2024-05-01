@@ -12,6 +12,8 @@ model Client {
   name        String
   email       String @unique
   phone       String
+  password    String 
+  isAdmin     Boolean 
   order       Order[] 
 
   @@map("clients")
