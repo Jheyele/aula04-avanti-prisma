@@ -108,6 +108,7 @@ export class ClientController {
                 include: {
                     order:{
                         select: {
+                            id: true,
                             description: true,
                             price: true
                             // Add other fields you want to include from the order
